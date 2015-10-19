@@ -14,3 +14,5 @@ Consumer Secret: bTuBemPWLFuXvtE2gKoPQjbA7_E
 Token: 0IPVHZWC3LDelwj6jBUNW5Vr29o3lFD5
 
 Token Secret: KZ7sIYzeqLhhLA9qqaAHEu3zEng
+
+MAPS KEY: AIzaSyCoK_aXGyWMREQUcpRi0XRIE8ztGquDU5k
