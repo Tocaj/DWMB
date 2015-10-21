@@ -13,6 +13,8 @@ import org.scribe.oauth.OAuthService;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.google.android.gms.maps.model.LatLng;
+import com.tocaj.martin.dwmb2.Yelp.Models.Business;
 
 /**
  * Created by Hiplobbe on 2015-10-20.
@@ -20,9 +22,9 @@ import com.beust.jcommander.Parameter;
 public class YelpAPI {
 
     private static final String API_HOST = "api.yelp.com";
-    private static final String DEFAULT_TERM = "dinner";
-    private static final String DEFAULT_LOCATION = "San Francisco, CA";
-    private static final int SEARCH_LIMIT = 3;
+    private static final String DEFAULT_TERM = "beer";
+    //private static final String DEFAULT_LOCATION = "Lund,Skåne län";
+    //private static final int SEARCH_LIMIT = 20;
     private static final String SEARCH_PATH = "/v2/search";
     private static final String BUSINESS_PATH = "/v2/business";
 
@@ -67,7 +69,13 @@ public class YelpAPI {
         OAuthRequest request = createOAuthRequest(SEARCH_PATH);
         request.addQuerystringParameter("term", term);
         request.addQuerystringParameter("location", location);
-        request.addQuerystringParameter("limit", String.valueOf(SEARCH_LIMIT));
+        return sendRequestAndGetResponse(request);
+    }
+
+    public String searchForBusinessesByLocation(String term, LatLng location) {
+        OAuthRequest request = createOAuthRequest(SEARCH_PATH);
+        request.addQuerystringParameter("term", term);
+        request.addQuerystringParameter("ll", location.latitude+","+location.longitude);
         return sendRequestAndGetResponse(request);
     }
 
@@ -114,11 +122,13 @@ public class YelpAPI {
      * the Business API.
      *
      * @param yelpApi <tt>YelpAPI</tt> service instance
-     * @param yelpApiCli <tt>YelpAPICLI</tt> command line arguments
      */
-    private static void queryAPI(YelpAPI yelpApi, YelpAPICLI yelpApiCli) {
+    private static void queryAPI(YelpAPI yelpApi,LatLng loc) {
         String searchResponseJSON =
-                yelpApi.searchForBusinessesByLocation(yelpApiCli.term, yelpApiCli.location);
+                yelpApi.searchForBusinessesByLocation(DEFAULT_TERM, loc);
+
+//        String searchResponseJSON =
+//                yelpApi.searchForBusinessesByLocation(yelpApiCli.term, yelpApiCli.location);
 
         JSONParser parser = new JSONParser();
         JSONObject response = null;
@@ -131,27 +141,23 @@ public class YelpAPI {
         }
 
         JSONArray businesses = (JSONArray) response.get("businesses");
-        JSONObject firstBusiness = (JSONObject) businesses.get(0);
-        String firstBusinessID = firstBusiness.get("id").toString();
-        System.out.println(String.format(
-                "%s businesses found, querying business info for the top result \"%s\" ...",
-                businesses.size(), firstBusinessID));
 
-        // Select the first business and display business details
-        String businessResponseJSON = yelpApi.searchByBusinessId(firstBusinessID.toString());
-        System.out.println(String.format("Result for business \"%s\" found:", firstBusinessID));
-        System.out.println(businessResponseJSON);
-    }
+        for(Object obj : businesses)
+        {
+            Business firstBusiness = new Business((JSONObject) obj);
+            System.out.print(firstBusiness.name);
+        }
 
-    /**
-     * Command-line interface for the sample Yelp API runner.
-     */
-    private static class YelpAPICLI {
-        @Parameter(names = {"-q", "--term"}, description = "Search Query Term")
-        public String term = DEFAULT_TERM;
 
-        @Parameter(names = {"-l", "--location"}, description = "Location to be Queried")
-        public String location = DEFAULT_LOCATION;
+//        String firstBusinessID = firstBusiness.get("id").toString();
+//        System.out.println(String.format(
+//                "%s businesses found, querying business info for the top result \"%s\" ...",
+//                businesses.size(), firstBusinessID));
+//
+//        // Select the first business and display business details
+//        String businessResponseJSON = yelpApi.searchByBusinessId(firstBusinessID.toString());
+//        System.out.println(String.format("Result for business \"%s\" found:", firstBusinessID));
+//        System.out.println(businessResponseJSON);
     }
 
     /**
@@ -160,10 +166,7 @@ public class YelpAPI {
      * After entering your OAuth credentials, execute <tt><b>run.sh</b></tt> to run this example.
      */
     public static void main(String[] args) {
-        YelpAPICLI yelpApiCli = new YelpAPICLI();
-        new JCommander(yelpApiCli, args);
-
         YelpAPI yelpApi = new YelpAPI(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
-        queryAPI(yelpApi, yelpApiCli);
+        queryAPI(yelpApi, new LatLng(55.7248935,13.1769561));
     }
 }
