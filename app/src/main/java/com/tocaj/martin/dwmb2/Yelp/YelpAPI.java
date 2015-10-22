@@ -11,10 +11,10 @@ import org.scribe.model.Token;
 import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
-import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
 import com.google.android.gms.maps.model.LatLng;
 import com.tocaj.martin.dwmb2.Yelp.Models.Business;
+
+import java.util.ArrayList;
 
 /**
  * Created by Hiplobbe on 2015-10-20.
@@ -23,8 +23,7 @@ public class YelpAPI {
 
     private static final String API_HOST = "api.yelp.com";
     private static final String DEFAULT_TERM = "beer";
-    //private static final String DEFAULT_LOCATION = "Lund,Skåne län";
-    //private static final int SEARCH_LIMIT = 20;
+    private static final String RADIUS= "1000";
     private static final String SEARCH_PATH = "/v2/search";
     private static final String BUSINESS_PATH = "/v2/business";
 
@@ -57,24 +56,16 @@ public class YelpAPI {
 
     /**
      * Creates and sends a request to the Search API by term and location.
-     * <p>
-     * See <a href="http://www.yelp.com/developers/documentation/v2/search_api">Yelp Search API V2</a>
-     * for more info.
      *
      * @param term <tt>String</tt> of the search term to be queried
      * @param location <tt>String</tt> of the location
      * @return <tt>String</tt> JSON Response
      */
-    public String searchForBusinessesByLocation(String term, String location) {
-        OAuthRequest request = createOAuthRequest(SEARCH_PATH);
-        request.addQuerystringParameter("term", term);
-        request.addQuerystringParameter("location", location);
-        return sendRequestAndGetResponse(request);
-    }
-
     public String searchForBusinessesByLocation(String term, LatLng location) {
         OAuthRequest request = createOAuthRequest(SEARCH_PATH);
         request.addQuerystringParameter("term", term);
+        request.addQuerystringParameter("radius_filter",RADIUS);
+        request.addQuerystringParameter("sort","2");
         request.addQuerystringParameter("ll", location.latitude+","+location.longitude);
         return sendRequestAndGetResponse(request);
     }
@@ -123,12 +114,9 @@ public class YelpAPI {
      *
      * @param yelpApi <tt>YelpAPI</tt> service instance
      */
-    private static void queryAPI(YelpAPI yelpApi,LatLng loc) {
+    private static ArrayList<Business> queryAPI(YelpAPI yelpApi,LatLng loc) {
         String searchResponseJSON =
                 yelpApi.searchForBusinessesByLocation(DEFAULT_TERM, loc);
-
-//        String searchResponseJSON =
-//                yelpApi.searchForBusinessesByLocation(yelpApiCli.term, yelpApiCli.location);
 
         JSONParser parser = new JSONParser();
         JSONObject response = null;
@@ -142,10 +130,19 @@ public class YelpAPI {
 
         JSONArray businesses = (JSONArray) response.get("businesses");
 
-        for(Object obj : businesses)
+        if(businesses.size() > 0) {
+            ArrayList<Business> list = new ArrayList<>();
+
+            for (Object obj : businesses) {
+                Business business = new Business((JSONObject) obj);
+                list.add(business);
+            }
+
+            return list;
+        }
+        else
         {
-            Business firstBusiness = new Business((JSONObject) obj);
-            System.out.print(firstBusiness.name);
+            return null;
         }
 
 
