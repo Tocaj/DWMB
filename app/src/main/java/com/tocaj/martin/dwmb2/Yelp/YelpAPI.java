@@ -1,5 +1,7 @@
 package com.tocaj.martin.dwmb2.Yelp;
 
+import android.widget.Toast;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -49,9 +51,17 @@ public class YelpAPI {
      */
     public YelpAPI(String consumerKey, String consumerSecret, String token, String tokenSecret) {
         this.service =
-                new ServiceBuilder().provider(Auth.class).apiKey(consumerKey)
+                new ServiceBuilder().provider(com.tocaj.martin.dwmb2.Yelp.Auth.class).apiKey(consumerKey)
                         .apiSecret(consumerSecret).build();
         this.accessToken = new Token(token, tokenSecret);
+    }
+
+    public YelpAPI()
+    {
+        this.service =
+                new ServiceBuilder().provider(com.tocaj.martin.dwmb2.Yelp.Auth.class).apiKey(CONSUMER_KEY)
+                        .apiSecret(CONSUMER_SECRET).build();
+        this.accessToken = new Token(TOKEN, TOKEN_SECRET);
     }
 
     /**
@@ -114,7 +124,7 @@ public class YelpAPI {
      *
      * @param yelpApi <tt>YelpAPI</tt> service instance
      */
-    private static ArrayList<Business> queryAPI(YelpAPI yelpApi,LatLng loc) {
+    public static ArrayList<Business> queryAPI(YelpAPI yelpApi,LatLng loc) {
         String searchResponseJSON =
                 yelpApi.searchForBusinessesByLocation(DEFAULT_TERM, loc);
 
@@ -128,10 +138,10 @@ public class YelpAPI {
             System.exit(1);
         }
 
-        JSONArray businesses = (JSONArray) response.get("businesses");
+         JSONArray businesses = (JSONArray) response.get("businesses");
 
         if(businesses.size() > 0) {
-            ArrayList<Business> list = new ArrayList<>();
+            ArrayList<Business> list = new ArrayList<Business>();
 
             for (Object obj : businesses) {
                 Business business = new Business((JSONObject) obj);
@@ -164,6 +174,8 @@ public class YelpAPI {
      */
     public static void main(String[] args) {
         YelpAPI yelpApi = new YelpAPI(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
-        queryAPI(yelpApi, new LatLng(55.7248935,13.1769561));
+        ArrayList<Business> list = queryAPI(yelpApi, new LatLng(55.595630, 13.001281));
+        System.out.println("HEJ");
     }
+
 }

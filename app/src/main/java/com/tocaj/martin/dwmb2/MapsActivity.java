@@ -1,22 +1,78 @@
 package com.tocaj.martin.dwmb2;
 
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.tocaj.martin.dwmb2.Yelp.Models.Business;
+import com.tocaj.martin.dwmb2.Yelp.YelpAPI;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
 public class MapsActivity extends FragmentActivity {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private LocationManager mLocationManager;
+    private Location location;
+
+    public LocationListener mLocationListener = new LocationListener() {
+
+        @Override
+        public void onLocationChanged(final Location location) {
+            MapsActivity.this.location = location;
+
+            //TODO Not do this step when the user has chosen a target destination.
+            setUpMap();
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        setupUserLocation();
+
         setUpMapIfNeeded();
+    }
+
+    private void setupUserLocation() {
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 100, mLocationListener);
+
+        // Creating a criteria object to retrieve provider
+        Criteria criteria = new Criteria();
+
+        // Getting the name of the best provider
+        String provider = mLocationManager.getBestProvider(criteria, true);
+
+        location = mLocationManager.getLastKnownLocation(provider);
     }
 
     @Override
@@ -60,6 +116,29 @@ public class MapsActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        mMap.clear();
+        mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Vi"));
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                YelpAPI api = new YelpAPI();
+                final ArrayList<Business> list = api.queryAPI(api,new LatLng(location.getLatitude(), location.getLongitude()));
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for(Business b : list)
+                        {
+                            mMap.addMarker(new MarkerOptions().position(new LatLng(b.location.latitude, b.location.longitude)).title(b.name));
+                        }
+                    }
+                });
+            }
+        });
+
+        t.start();
     }
 }

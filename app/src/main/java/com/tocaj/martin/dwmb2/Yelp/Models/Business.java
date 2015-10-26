@@ -18,7 +18,7 @@ public class Business
     public Business(JSONObject obj)
     {
         name = (String)obj.get("name");
-        rating = (double)obj.get("rating");
+        rating = Double.parseDouble(obj.get("rating").toString());
 
         setLocation((JSONObject)obj.get("location"));
     }
@@ -27,8 +27,8 @@ public class Business
     {
         obj = (JSONObject)obj.get("coordinate");
 
-        double latitude = (double)obj.get("latitude");
-        double longitude = (double)obj.get("longitude");
+        double latitude = Double.parseDouble(obj.get("latitude").toString());
+        double longitude = Double.parseDouble(obj.get("longitude").toString());
 
         location = new LatLng(latitude,longitude);
     }
