@@ -100,6 +100,7 @@ public class MapsActivity extends FragmentActivity {
 
         mMap.setOnInfoWindowClickListener(listener);
         rListener = new RouteListener(mMap);
+        mMap.setMyLocationEnabled(true);
     }
 
     private void setupUserLocation() {
@@ -175,28 +176,28 @@ public class MapsActivity extends FragmentActivity {
                         for(Business b : list)
                         {
                             final Business business = b;
-                            GoogleMap.InfoWindowAdapter IWA = new GoogleMap.InfoWindowAdapter() {
-                                @Override
-                                public View getInfoWindow(Marker marker) {
-                                    TextView tv = new TextView(getApplicationContext());
-                                    tv.setText("Namn: " + business.name + "\n" + "Rating: " + business.rating);
-                                    tv.setBackgroundColor(Color.BLACK);
-                                    tv.setAlpha(1);
-
-                                    return tv;
-                                }
-
-                                @Override
-                                public View getInfoContents(Marker marker) {
+//                            GoogleMap.InfoWindowAdapter IWA = new GoogleMap.InfoWindowAdapter() {
+//                                @Override
+//                                public View getInfoWindow(Marker marker) {
 //                                    TextView tv = new TextView(getApplicationContext());
 //                                    tv.setText("Namn: " + business.name + "\n" + "Rating: " + business.rating);
+//                                    tv.setBackgroundColor(Color.BLACK);
+//                                    tv.setAlpha(1);
+//
 //                                    return tv;
-                                    return null;
-                                }
-                            };
+//                                }
+//
+//                                @Override
+//                                public View getInfoContents(Marker marker) {
+////                                    TextView tv = new TextView(getApplicationContext());
+////                                    tv.setText("Namn: " + business.name + "\n" + "Rating: " + business.rating);
+////                                    return tv;
+//                                    return null;
+//                                }
+//                            };
 
-                            MarkerOptions m = new MarkerOptions().position(new LatLng(b.location.latitude, b.location.longitude)).title(b.name);
-                            mMap.setInfoWindowAdapter(IWA);
+                            MarkerOptions m = new MarkerOptions().position(new LatLng(b.location.latitude, b.location.longitude)).title(b.name).snippet("Rating: " + b.rating);
+//                            mMap.setInfoWindowAdapter(IWA);
 
                             mMap.addMarker(m);
                         }
