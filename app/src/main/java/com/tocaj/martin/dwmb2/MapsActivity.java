@@ -64,13 +64,15 @@ public class MapsActivity extends FragmentActivity {
     private void setupUserLocation() {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 100, mLocationListener);
+
 
         // Creating a criteria object to retrieve provider
         Criteria criteria = new Criteria();
 
         // Getting the name of the best provider
         String provider = mLocationManager.getBestProvider(criteria, true);
+
+        mLocationManager.requestLocationUpdates(provider, 1000, 10, mLocationListener);
 
         location = mLocationManager.getLastKnownLocation(provider);
     }
