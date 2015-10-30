@@ -11,9 +11,12 @@ import android.view.View;
 import android.widget.TextView;
 
 
+import com.directions.route.AbstractRouting;
+import com.directions.route.Routing;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.Marker;
+import com.tocaj.martin.dwmb2.Listeners.RouteListener;
 import com.tocaj.martin.dwmb2.Yelp.Models.Business;
 import com.tocaj.martin.dwmb2.Yelp.YelpAPI;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,17 +31,20 @@ public class MapsActivity extends FragmentActivity {
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LocationManager mLocationManager;
     private Location location;
-//    private GoogleMap.InfoWindowAdapter IWA = new GoogleMap.InfoWindowAdapter() {
-//        @Override
-//        public View getInfoWindow(Marker marker) {
-//            return null;
-//        }
-//
-//        @Override
-//        public View getInfoContents(Marker marker) {
-//            return null;
-//        }
-//    };
+    private GoogleMap.OnInfoWindowClickListener listener = new GoogleMap.OnInfoWindowClickListener() {
+        @Override
+        public void onInfoWindowClick(Marker marker) {
+            LatLng startPos = new LatLng(location.getLatitude(),location.getLongitude());
+            LatLng businessPos = marker.getPosition();
+
+            Routing routing = new Routing.Builder()
+                    .travelMode(AbstractRouting.TravelMode.WALKING)
+                    .withListener(new RouteListener(mMap))
+                    .waypoints(startPos,null,businessPos)
+                    .build();
+            routing.execute();
+        }
+    };
 
     public LocationListener mLocationListener = new LocationListener() {
 
@@ -78,8 +84,6 @@ public class MapsActivity extends FragmentActivity {
 
     private void setupUserLocation() {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-
 
         // Creating a criteria object to retrieve provider
         Criteria criteria = new Criteria();
@@ -134,7 +138,7 @@ public class MapsActivity extends FragmentActivity {
      */
     private void setUpMap() {
         mMap.clear();
-        mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Vi"));
+        //mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Vi"));
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
 
