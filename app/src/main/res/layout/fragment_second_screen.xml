@@ -1,0 +1,23 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="se.mah.ae5216.dudewheresmybeer02.SecondScreenFragment">
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:name="se.mah.ae5216.dudewheresmybeer02.SliderFragment"
+        android:id="@+id/fragment_slider"
+        tools:layout="@layout/fragment_slider"
+        android:layout_gravity="center_horizontal|bottom" />
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="370dp"
+        android:name="se.mah.ae5216.dudewheresmybeer02.MapFragment"
+        android:id="@+id/fragment_map"
+
+        tools:layout="@layout/fragment_map"
+
+        android:layout_gravity="center_horizontal|top" />
+</FrameLayout>
