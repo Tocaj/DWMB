@@ -25,7 +25,7 @@ public class YelpAPI {
 
     private static final String API_HOST = "api.yelp.com";
     private static final String DEFAULT_TERM = "beer";
-    private static final String RADIUS= "1000";
+    private static final String RADIUS= "3000";
     private static final String SEARCH_PATH = "/v2/search";
     private static final String BUSINESS_PATH = "/v2/business";
 

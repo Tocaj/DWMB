@@ -1,10 +1,13 @@
 package com.tocaj.martin.dwmb2.uiFragmentMap;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
-public class SecondScreenActivity extends AppCompatActivity {
+
+import com.tocaj.martin.dwmb2.R;
+
+public class SecondScreenActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
