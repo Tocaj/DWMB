@@ -8,8 +8,12 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
 
+import com.directions.route.AbstractRouting;
+import com.directions.route.Routing;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.Marker;
+import com.tocaj.martin.dwmb2.Listeners.RouteListener;
 import com.tocaj.martin.dwmb2.Yelp.Models.Business;
 import com.tocaj.martin.dwmb2.Yelp.YelpAPI;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,6 +28,20 @@ public class MapsActivity extends FragmentActivity {
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LocationManager mLocationManager;
     private Location location;
+    private GoogleMap.OnInfoWindowClickListener listener = new GoogleMap.OnInfoWindowClickListener() {
+        @Override
+        public void onInfoWindowClick(Marker marker) {
+            LatLng startPos = new LatLng(location.getLatitude(),location.getLongitude());
+            LatLng businessPos = marker.getPosition();
+
+            Routing routing = new Routing.Builder()
+                    .travelMode(AbstractRouting.TravelMode.WALKING)
+                    .withListener(new RouteListener(mMap))
+                    .waypoints(startPos,null,businessPos)
+                    .build();
+            routing.execute();
+        }
+    };
 
     public LocationListener mLocationListener = new LocationListener() {
 
@@ -64,13 +82,13 @@ public class MapsActivity extends FragmentActivity {
     private void setupUserLocation() {
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 100, mLocationListener);
-
         // Creating a criteria object to retrieve provider
         Criteria criteria = new Criteria();
 
         // Getting the name of the best provider
         String provider = mLocationManager.getBestProvider(criteria, true);
+
+        mLocationManager.requestLocationUpdates(provider, 1000, 10, mLocationListener);
 
         location = mLocationManager.getLastKnownLocation(provider);
     }
@@ -117,7 +135,7 @@ public class MapsActivity extends FragmentActivity {
      */
     private void setUpMap() {
         mMap.clear();
-        mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Vi"));
+        //mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Vi"));
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
 
@@ -132,7 +150,8 @@ public class MapsActivity extends FragmentActivity {
                     public void run() {
                         for(Business b : list)
                         {
-                            mMap.addMarker(new MarkerOptions().position(new LatLng(b.location.latitude, b.location.longitude)).title(b.name));
+                            MarkerOptions m = new MarkerOptions().position(new LatLng(b.location.latitude, b.location.longitude)).title(b.name).snippet("Yolo");
+                            mMap.addMarker(m);
                         }
                     }
                 });
