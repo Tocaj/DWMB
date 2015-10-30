@@ -43,6 +43,7 @@ public class RouteListener implements RoutingListener
         }
 
         polylines = new ArrayList<>();
+
         //add route(s) to the map.
         for (int i = 0; i <route.size(); i++) {
             PolylineOptions polyOptions = new PolylineOptions();

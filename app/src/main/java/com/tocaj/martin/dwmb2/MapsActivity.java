@@ -31,20 +31,27 @@ public class MapsActivity extends FragmentActivity {
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LocationManager mLocationManager;
     private Location location;
+    private LatLng destination = null;
+    private RouteListener rListener = null;
     private GoogleMap.OnInfoWindowClickListener listener = new GoogleMap.OnInfoWindowClickListener() {
         @Override
         public void onInfoWindowClick(Marker marker) {
-            LatLng startPos = new LatLng(location.getLatitude(),location.getLongitude());
-            LatLng businessPos = marker.getPosition();
+            destination = marker.getPosition();
 
-            Routing routing = new Routing.Builder()
-                    .travelMode(AbstractRouting.TravelMode.WALKING)
-                    .withListener(new RouteListener(mMap))
-                    .waypoints(startPos,null,businessPos)
-                    .build();
-            routing.execute();
+            routeToDestination();
         }
     };
+
+    private void routeToDestination() {
+        LatLng startPos = new LatLng(location.getLatitude(),location.getLongitude());
+
+        Routing routing = new Routing.Builder()
+                .travelMode(AbstractRouting.TravelMode.WALKING)
+                .withListener(rListener)
+                .waypoints(startPos, destination)
+                .build();
+        routing.execute();
+    }
 
     public LocationListener mLocationListener = new LocationListener() {
 
@@ -52,8 +59,18 @@ public class MapsActivity extends FragmentActivity {
         public void onLocationChanged(final Location location) {
             MapsActivity.this.location = location;
 
-            //TODO Not do this step when the user has chosen a target destination.
-            setUpMap();
+            if(destination != null)
+            {
+//                if() TODO:Check if arrived
+//                {
+//
+//                }
+                routeToDestination();
+            }
+            else
+            {
+                setUpMap();
+            }
         }
 
         @Override
@@ -80,6 +97,9 @@ public class MapsActivity extends FragmentActivity {
         setupUserLocation();
 
         setUpMapIfNeeded();
+
+        mMap.setOnInfoWindowClickListener(listener);
+        rListener = new RouteListener(mMap);
     }
 
     private void setupUserLocation() {
