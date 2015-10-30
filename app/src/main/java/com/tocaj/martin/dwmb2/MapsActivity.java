@@ -1,15 +1,19 @@
 package com.tocaj.martin.dwmb2;
 
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.Marker;
 import com.tocaj.martin.dwmb2.Yelp.Models.Business;
 import com.tocaj.martin.dwmb2.Yelp.YelpAPI;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,6 +28,17 @@ public class MapsActivity extends FragmentActivity {
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LocationManager mLocationManager;
     private Location location;
+//    private GoogleMap.InfoWindowAdapter IWA = new GoogleMap.InfoWindowAdapter() {
+//        @Override
+//        public View getInfoWindow(Marker marker) {
+//            return null;
+//        }
+//
+//        @Override
+//        public View getInfoContents(Marker marker) {
+//            return null;
+//        }
+//    };
 
     public LocationListener mLocationListener = new LocationListener() {
 
@@ -132,9 +147,34 @@ public class MapsActivity extends FragmentActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+
                         for(Business b : list)
                         {
-                            mMap.addMarker(new MarkerOptions().position(new LatLng(b.location.latitude, b.location.longitude)).title(b.name));
+                            final Business business = b;
+                            GoogleMap.InfoWindowAdapter IWA = new GoogleMap.InfoWindowAdapter() {
+                                @Override
+                                public View getInfoWindow(Marker marker) {
+                                    TextView tv = new TextView(getApplicationContext());
+                                    tv.setText("Namn: " + business.name + "\n" + "Rating: " + business.rating);
+                                    tv.setBackgroundColor(Color.BLACK);
+                                    tv.setAlpha(1);
+
+                                    return tv;
+                                }
+
+                                @Override
+                                public View getInfoContents(Marker marker) {
+//                                    TextView tv = new TextView(getApplicationContext());
+//                                    tv.setText("Namn: " + business.name + "\n" + "Rating: " + business.rating);
+//                                    return tv;
+                                    return null;
+                                }
+                            };
+
+                            MarkerOptions m = new MarkerOptions().position(new LatLng(b.location.latitude, b.location.longitude)).title(b.name);
+                            mMap.setInfoWindowAdapter(IWA);
+
+                            mMap.addMarker(m);
                         }
                     }
                 });
