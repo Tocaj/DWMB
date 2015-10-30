@@ -61,11 +61,20 @@ public class MapsActivity extends FragmentActivity {
 
             if(destination != null)
             {
-//                if() TODO:Check if arrived
-//                {
-//
-//                }
-                routeToDestination();
+                Location desLocation = new Location("destination");
+                desLocation.setLatitude(destination.latitude);
+                desLocation.setLongitude(destination.longitude);
+
+                float distance = location.distanceTo(desLocation);
+
+                if(distance <= 10)
+                {
+                    destination = null;
+                    setUpMap();
+                }
+                else {
+                    routeToDestination();
+                }
             }
             else
             {
