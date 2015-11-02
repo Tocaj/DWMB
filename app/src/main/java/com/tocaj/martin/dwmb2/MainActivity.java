@@ -19,6 +19,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     private Button btnButton;
     private Spinner spinner;
     private TextView label;
+    String rating = "";
+//    MapsActivity ma = new MapsActivity();
 
     private ArrayAdapter adapter;
 
@@ -35,7 +37,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
 
         label=(TextView)findViewById(R.id.twLabel);
         btnButton = (Button) findViewById(R.id.btnButton);
-        spinner = (Spinner) findViewById(R.id.spSpinner);
+        spinner = (Spinner) findViewById(R.id.spinner);
         adapter = ArrayAdapter.createFromResource
                 (this, R.array.object_array, android.R.layout.simple_spinner_item);
 
@@ -50,6 +52,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     }
 
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//        TextView spinnerText = (TextView) view;
 
     }
 
@@ -63,8 +66,13 @@ private class StartListener implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+//        ma.setMinRating(rating);
+
+        rating =   spinner.getSelectedItem().toString();
+
         Intent intent;
         intent=new Intent(MainActivity.this, MapsActivity.class);
+        intent.putExtra("key", rating);
         startActivity(intent);
 
     }

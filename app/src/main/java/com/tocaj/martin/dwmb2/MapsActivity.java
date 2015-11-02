@@ -1,5 +1,6 @@
 package com.tocaj.martin.dwmb2;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
@@ -28,9 +29,15 @@ import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity {
 
+    private Intent i;
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private LocationManager mLocationManager;
+
+    private double minRating = 0;
+
     private Location location;
+
+
     private LatLng destination = null;
     private RouteListener rListener = null;
     private GoogleMap.OnInfoWindowClickListener listener = new GoogleMap.OnInfoWindowClickListener() {
@@ -98,18 +105,27 @@ public class MapsActivity extends FragmentActivity {
         }
     };
 
+    public void setMinRating(String rating)
+    {
+        minRating = Double.parseDouble(rating);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
+        i = getIntent();
+        setMinRating(i.getStringExtra("key"));
         setupUserLocation();
 
         setUpMapIfNeeded();
 
+
         mMap.setOnInfoWindowClickListener(listener);
         rListener = new RouteListener(mMap);
         mMap.setMyLocationEnabled(true);
+
+
     }
 
     private void setupUserLocation() {
@@ -205,10 +221,12 @@ public class MapsActivity extends FragmentActivity {
 //                                }
 //                            };
 
-                            MarkerOptions m = new MarkerOptions().position(new LatLng(b.location.latitude, b.location.longitude)).title(b.name).snippet("Rating: " + b.rating);
+                            if(b.rating >= minRating) {
+                                MarkerOptions m = new MarkerOptions().position(new LatLng(b.location.latitude, b.location.longitude)).title(b.name).snippet("Rating: " + b.rating);
 //                            mMap.setInfoWindowAdapter(IWA);
 
-                            mMap.addMarker(m);
+                                mMap.addMarker(m);
+                            }
                         }
                     }
                 });

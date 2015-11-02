@@ -33,6 +33,7 @@
         android:prompt="@string/select"
         android:spinnerMode="dropdown"
         android:layout_below="@+id/twLabel"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:minHeight="65dp"/>
 
 </RelativeLayout>
