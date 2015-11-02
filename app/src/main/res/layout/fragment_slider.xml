@@ -4,12 +4,5 @@
     tools:context="se.mah.ae5216.dudewheresmybeer02.SliderFragment">
 
 
-    <Spinner
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/spSpinner"
-        android:layout_gravity="center"
-        android:entries="@array/object_array"
-        android:prompt="@string/select"
-        android:spinnerMode="dropdown" />
+
 </FrameLayout>
