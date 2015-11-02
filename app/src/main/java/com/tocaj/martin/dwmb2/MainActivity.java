@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.tocaj.martin.dwmb2.uiFragmentMap.MapFragment;
 
@@ -17,6 +18,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     private MapFragment mapFragment;
     private Button btnButton;
     private Spinner spinner;
+    private TextView label;
 
     private ArrayAdapter adapter;
 
@@ -30,6 +32,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemSelected
     }
 
     private void initializeComponents() {
+
+        label=(TextView)findViewById(R.id.twLabel);
         btnButton = (Button) findViewById(R.id.btnButton);
         spinner = (Spinner) findViewById(R.id.spSpinner);
         adapter = ArrayAdapter.createFromResource
