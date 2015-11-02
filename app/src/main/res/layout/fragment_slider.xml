@@ -9,5 +9,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/spSpinner"
         android:layout_gravity="center"
+        android:entries="@array/object_array"
+        android:prompt="@string/select"
         android:spinnerMode="dropdown" />
 </FrameLayout>
