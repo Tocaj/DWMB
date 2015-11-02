@@ -9,15 +9,15 @@
     <string name ="select">Choose an object</string>
     <string-array name="object_array">
         <item>0</item>
-        <item>0,5</item>
+        <item>0.5</item>
         <item>1</item>
-        <item>1,5</item>
+        <item>1.5</item>
         <item>2</item>
-        <item>2,5</item>
+        <item>2.5</item>
         <item>3</item>
-        <item>3,5</item>
+        <item>3.5</item>
         <item>4</item>
-        <item>4,5</item>
+        <item>4.5</item>
         <item>5</item>
     </string-array>
 

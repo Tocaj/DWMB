@@ -9,7 +9,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Find!"
+        android:text="ÖL."
         android:id="@+id/btnButton"
         android:layout_below="@+id/spinner"
         android:layout_alignParentStart="true" />
